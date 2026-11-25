@@ -1,0 +1,9 @@
+{
+  "name": "sehat/backend-api",
+  "description": "Hospital Management System (HMS) REST API",
+  "type": "project",
+  "require": {
+    "php": ">=8.0",
+    "aws/aws-sdk-php": "^3.280"
+  }
+}
