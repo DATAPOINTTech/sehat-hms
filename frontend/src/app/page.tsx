@@ -11,6 +11,7 @@ import { getQueue, getDoctors, callPatientToken, skipPatientToken, fastForward10
 import { QueueToken, Doctor, Patient } from '@/lib/types';
 import CountdownTimer from '@/components/CountdownTimer';
 import PatientProfileModal from '@/components/PatientProfileModal';
+import ReceptionistBookModal from '@/components/ReceptionistBookModal';
 import PermissionGuard from '@/components/PermissionGuard';
 
 export default function HomePage() {
@@ -118,7 +119,7 @@ export default function HomePage() {
             className="inline-flex items-center gap-1.5 px-4 py-2 bg-white text-blue-700 hover:bg-blue-50 font-bold text-xs rounded-xl shadow transition"
           >
             <Plus className="w-4 h-4" />
-            Issue Walk-In Token
+            Search MR &amp; Book Appointment
           </button>
           <button
             onClick={fetchLiveQueue}
@@ -336,61 +337,12 @@ export default function HomePage() {
         )}
       </div>
 
-      {/* Walk-in Modal */}
-      {isWalkinModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
-          <div className="relative w-full max-w-md bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border border-slate-200 dark:border-slate-800 p-6 space-y-4">
-            <h3 className="font-bold text-base text-slate-900 dark:text-white">Issue Walk-In Queue Token</h3>
-            <form onSubmit={handleWalkinSubmit} className="space-y-4">
-              <div>
-                <label className="text-xs font-medium text-slate-700 dark:text-slate-300">Select Patient (MR No)</label>
-                <select
-                  value={walkinPatientId}
-                  onChange={(e) => setWalkinPatientId(Number(e.target.value))}
-                  className="w-full mt-1 px-3 py-2 text-sm border rounded-xl dark:bg-slate-800 dark:border-slate-700 text-slate-900 dark:text-white"
-                >
-                  {patientsList.map((p) => (
-                    <option key={p.id} value={p.id}>
-                      {p.mr_no} - {p.name} ({p.phone})
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              <div>
-                <label className="text-xs font-medium text-slate-700 dark:text-slate-300">Select Doctor</label>
-                <select
-                  value={walkinDoctorId}
-                  onChange={(e) => setWalkinDoctorId(Number(e.target.value))}
-                  className="w-full mt-1 px-3 py-2 text-sm border rounded-xl dark:bg-slate-800 dark:border-slate-700 text-slate-900 dark:text-white"
-                >
-                  {doctors.map((d) => (
-                    <option key={d.id} value={d.id}>
-                      {d.name} ({d.specialty} - {d.room_no})
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              <div className="flex justify-end gap-2 pt-2">
-                <button
-                  type="button"
-                  onClick={() => setIsWalkinModalOpen(false)}
-                  className="px-4 py-2 text-xs font-semibold text-slate-500 hover:text-slate-800"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="px-4 py-2 text-xs font-bold bg-blue-600 hover:bg-blue-700 text-white rounded-xl shadow-md transition"
-                >
-                  Generate Token
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
+      {/* Receptionist Search MR & Book Appointment Modal */}
+      <ReceptionistBookModal
+        isOpen={isWalkinModalOpen}
+        onClose={() => setIsWalkinModalOpen(false)}
+        onBooked={fetchLiveQueue}
+      />
 
       {/* Patient Profile Modal */}
       {selectedPatientId && (

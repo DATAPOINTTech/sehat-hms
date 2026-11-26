@@ -4,10 +4,11 @@
 import React, { useState, useEffect } from 'react';
 import {
   X, User, Phone, Mail, MapPin, Calendar, Heart, FileText,
-  Activity, Bed, CreditCard, Download, ExternalLink, Printer, CheckCircle2
+  Activity, Bed, CreditCard, Download, ExternalLink, Printer, CheckCircle2, CalendarPlus
 } from 'lucide-react';
 import { getPatientProfile, recordPayment } from '@/lib/api';
 import { Patient, Consultation, LabOrder, Invoice, Appointment } from '@/lib/types';
+import ReceptionistBookModal from './ReceptionistBookModal';
 
 interface PatientProfileModalProps {
   patientId: number | null;
@@ -26,6 +27,7 @@ export default function PatientProfileModal({ patientId, onClose, onUpdate }: Pa
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [payingInvoiceId, setPayingInvoiceId] = useState<number | null>(null);
   const [payAmount, setPayAmount] = useState<string>('');
+  const [isBookModalOpen, setIsBookModalOpen] = useState<boolean>(false);
 
   useEffect(() => {
     if (!patientId) return;
@@ -92,12 +94,23 @@ export default function PatientProfileModal({ patientId, onClose, onUpdate }: Pa
             </div>
           </div>
 
-          <button
-            onClick={onClose}
-            className="p-2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition"
-          >
-            <X className="w-5 h-5" />
-          </button>
+          <div className="flex items-center gap-2">
+            {patient && (
+              <button
+                onClick={() => setIsBookModalOpen(true)}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold bg-blue-600 hover:bg-blue-700 text-white rounded-xl shadow-sm transition"
+              >
+                <CalendarPlus className="w-3.5 h-3.5" />
+                Book Appointment
+              </button>
+            )}
+            <button
+              onClick={onClose}
+              className="p-2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition"
+            >
+              <X className="w-5 h-5" />
+            </button>
+          </div>
         </div>
 
         {/* Tab Navigation */}
@@ -502,6 +515,17 @@ export default function PatientProfileModal({ patientId, onClose, onUpdate }: Pa
           )}
         </div>
       </div>
+
+      {patient && (
+        <ReceptionistBookModal
+          isOpen={isBookModalOpen}
+          onClose={() => setIsBookModalOpen(false)}
+          preselectedPatient={patient}
+          onBooked={() => {
+            if (onUpdate) onUpdate();
+          }}
+        />
+      )}
     </div>
   );
 }
